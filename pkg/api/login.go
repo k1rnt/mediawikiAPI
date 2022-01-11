@@ -1,14 +1,13 @@
 package api
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 
 	"github.com/k1rnt/mediawikiAPI/config"
 )
 
-func GetLoginRequest(cli *http.Client, token string) []byte {
+func GetLoginRequest(cli *http.Client, token string) ([]byte, error) {
 	data := url.Values{}
 	data.Add("action", "login")
 	data.Add("lgname", config.User)
@@ -18,8 +17,8 @@ func GetLoginRequest(cli *http.Client, token string) []byte {
 
 	body, err := postRequest(cli, data)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return body
+	return body, nil
 }

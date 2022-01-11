@@ -7,14 +7,18 @@ import (
 	"net/url"
 
 	"github.com/k1rnt/mediawikiAPI/pkg/utils"
+	"golang.org/x/xerrors"
 )
 
-func EditRequest(cli *http.Client, csrftoken string, path string) []byte {
+func EditRequest(cli *http.Client, csrftoken string, path string) ([]byte, error) {
 	f, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Fatalf("Failed to open %s\n", path)
+		return nil, xerrors.Errorf("Failed to open %s\n", path)
 	}
-	filename := utils.GetFileNameWithoutExt(path)
+	filename, err := utils.GetFileNameWithoutExt(path)
+	if err != nil {
+		return nil, err
+	}
 
 	data := url.Values{}
 	data.Add("action", "edit")
@@ -28,5 +32,5 @@ func EditRequest(cli *http.Client, csrftoken string, path string) []byte {
 		log.Fatal(err)
 	}
 
-	return body
+	return body, nil
 }
