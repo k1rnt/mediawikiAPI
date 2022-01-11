@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"time"
 
 	"github.com/k1rnt/mediawikiAPI/pkg/api"
+	"github.com/k1rnt/mediawikiAPI/pkg/utils"
 )
 
 func setClient() *http.Client {
@@ -24,8 +24,17 @@ func setClient() *http.Client {
 }
 
 func main() {
+	// example#1
 	cli := setClient()
 	logintoken := api.GetLoginToken(cli).Query.Tokens.Logintoken
 	api.GetLoginRequest(cli, logintoken)
-	fmt.Printf("%s\n", api.CsrfToken(cli).Query.Tokens.Csrftoken)
+	csrftoken := api.CsrfToken(cli).Query.Tokens.Csrftoken
+
+	files, err := utils.FindWikiFiles("dir")
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, path := range files {
+		api.EditRequest(cli, csrftoken, path)
+	}
 }
