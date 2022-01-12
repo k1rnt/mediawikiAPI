@@ -30,7 +30,7 @@ func main() {
 	api.GetLoginRequest(cli, logintoken)
 	csrftoken := api.CsrfToken(cli).Query.Tokens.Csrftoken
 
-	files, err := utils.FindWikiFiles("dir")
+	files, err := utils.FindWikiFiles(dir)
 	if err != nil {
 		log.Fatal(err)
 	}
