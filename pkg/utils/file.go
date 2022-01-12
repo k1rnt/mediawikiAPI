@@ -8,7 +8,7 @@ import (
 	"golang.org/x/xerrors"
 )
 
-// ファイルパスから拡張子を取り除いたファイル名を返す
+// pathから拡張子を取り除いたファイル名を返す
 func GetFileNameWithoutExt(path string) (string, error) {
 	if !Exists(path) {
 		return "", xerrors.Errorf("%s does not exist", path)
@@ -16,7 +16,7 @@ func GetFileNameWithoutExt(path string) (string, error) {
 	return filepath.Base(path[:len(path)-len(filepath.Ext(path))]), nil
 }
 
-// dir から再起的にファイルを探索しstring sliceで返す
+// dir から再起的にwikiファイルを探索しstring sliceで返す
 func FindWikiFiles(dir string) ([]string, error) {
 	if !Exists(dir) {
 		return nil, xerrors.Errorf("%s does not exist", dir)
@@ -26,6 +26,12 @@ func FindWikiFiles(dir string) ([]string, error) {
 		if err != nil {
 			return err
 		}
+
+		// mediawikiファイル以外は飛ばす
+		if !isMediawikiFile(path) {
+			return nil
+		}
+
 		files = append(files, path)
 		return nil
 	})
@@ -35,9 +41,15 @@ func FindWikiFiles(dir string) ([]string, error) {
 	return files, nil
 }
 
+// pathが存在するかどうかを真偽値で返す
 func Exists(path string) bool {
 	if _, err := os.Stat(path); err != nil {
 		return false
 	}
 	return true
+}
+
+// pathの拡張子がmediawikiかどうかを真偽値で返す
+func isMediawikiFile(path string) bool {
+	return filepath.Ext(path) == ".mediawiki"
 }
