@@ -159,4 +159,5 @@ fabric.properties
 
 # this repo
 .env
+.input
 !.gitkeep
