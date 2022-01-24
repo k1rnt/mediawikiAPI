@@ -1,6 +1,6 @@
 # mediawikiAPI
 
 ## feature
-- [x] logun
+- [x] login
 - [x] edit
 - [x] upload
