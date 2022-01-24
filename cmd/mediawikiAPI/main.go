@@ -1,13 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 
+	"github.com/k1rnt/mediawikiAPI/handler"
 	"github.com/k1rnt/mediawikiAPI/pkg/api"
-	"github.com/k1rnt/mediawikiAPI/pkg/utils"
 )
 
 func setClient() *http.Client {
@@ -29,29 +28,17 @@ func main() {
 	api.GetLoginRequest(cli, logintoken)
 	csrftoken := api.CsrfToken(cli).Query.Tokens.Csrftoken
 
-	// example#1
-	// files, err := utils.FindWikiFiles(wiki_path)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// for _, path := range files {
-	// 	if _, err := api.EditRequest(cli, csrftoken, path); err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	fmt.Printf("success %s\n", path)
-	// }
-
-	// example#2
-	images, err := utils.FindImageFiles(images_path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, path := range images {
-		body, err := api.Upload(cli, csrftoken, path)
-		if err != nil {
+	// wiki一括ページ作成
+	if wiki_path != "" {
+		if err := handler.UploadPageHandler(cli, csrftoken, wiki_path); err != nil {
 			log.Fatal(err)
 		}
-		fmt.Printf("%s\n", body)
-		fmt.Printf("success %s\n", path)
+	}
+
+	// 画像一括投稿
+	if images_path != "" {
+		if err := handler.UploadImageHandler(cli, csrftoken, images_path); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
